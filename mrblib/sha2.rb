@@ -8,6 +8,10 @@ module Digest
       new(str).hexdigest
     end
 
+    def self.file(filename)
+      new.file(filename)
+    end
+
     def ==(md)
       self.to_s == md.to_s
     end

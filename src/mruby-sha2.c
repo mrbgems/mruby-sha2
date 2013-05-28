@@ -101,6 +101,34 @@ sha256_block_length(mrb_state *mrb, mrb_value self)
 }
 
 static mrb_value
+sha256_file(mrb_state *mrb, mrb_value self)
+{
+
+#ifdef ENABLE_FILE_DIGEST
+  SHA256_CTX *ctx = (SHA256_CTX*)DATA_PTR(self);
+  char *filename;
+  char block[SHA256_BLOCK_LENGTH];
+  size_t len;
+  FILE *fp;
+
+  mrb_get_args(mrb, "z", &filename);
+  if((fp = fopen(filename, "rb")) == NULL) {
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "cannot open: %S", mrb_str_new_cstr(mrb, filename));
+  }
+
+  while((len = fread(block, 1, SHA256_BLOCK_LENGTH, fp)) > 0) {
+    SHA256_Update(ctx, (const u_int8_t *)block, len);
+  }
+  
+  fclose(fp);
+#else
+  mrb_raise(mrb, E_NOTIMP_ERROR, "Digest::SHA256#file not implemented");
+#endif
+
+  return self;
+}
+
+static mrb_value
 sha384_initialize(mrb_state *mrb, mrb_value self)
 {
   char *str;
@@ -178,6 +206,34 @@ static mrb_value
 sha384_block_length(mrb_state *mrb, mrb_value self)
 {
   return mrb_fixnum_value(SHA384_BLOCK_LENGTH);
+}
+
+static mrb_value
+sha384_file(mrb_state *mrb, mrb_value self)
+{
+
+#ifdef ENABLE_FILE_DIGEST
+  SHA384_CTX *ctx = (SHA384_CTX*)DATA_PTR(self);
+  char *filename;
+  char block[SHA384_BLOCK_LENGTH];
+  size_t len;
+  FILE *fp;
+
+  mrb_get_args(mrb, "z", &filename);
+  if((fp = fopen(filename, "rb")) == NULL) {
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "cannot open: %S", mrb_str_new_cstr(mrb, filename));
+  }
+
+  while((len = fread(block, 1, SHA384_BLOCK_LENGTH, fp)) > 0) {
+    SHA384_Update(ctx, (const u_int8_t *)block, len);
+  }
+  
+  fclose(fp);
+#else
+  mrb_raise(mrb, E_NOTIMP_ERROR, "Digest::SHA384#file not implemented");
+#endif
+
+  return self;
 }
 
 static mrb_value
@@ -260,6 +316,34 @@ sha512_block_length(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(SHA512_BLOCK_LENGTH);
 }
 
+static mrb_value
+sha512_file(mrb_state *mrb, mrb_value self)
+{
+
+#ifdef ENABLE_FILE_DIGEST
+  SHA512_CTX *ctx = (SHA512_CTX*)DATA_PTR(self);
+  char *filename;
+  char block[SHA512_BLOCK_LENGTH];
+  size_t len;
+  FILE *fp;
+
+  mrb_get_args(mrb, "z", &filename);
+  if((fp = fopen(filename, "rb")) == NULL) {
+    mrb_raisef(mrb, E_RUNTIME_ERROR, "cannot open: %S", mrb_str_new_cstr(mrb, filename));
+  }
+
+  while((len = fread(block, 1, SHA512_BLOCK_LENGTH, fp)) > 0) {
+    SHA512_Update(ctx, (const u_int8_t *)block, len);
+  }
+  
+  fclose(fp);
+#else
+  mrb_raise(mrb, E_NOTIMP_ERROR, "Digest::SHA512#file not implemented");
+#endif
+
+  return self;
+}
+
 void
 mrb_mruby_sha2_gem_init(mrb_state* mrb)
 {
@@ -284,6 +368,7 @@ mrb_mruby_sha2_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, sha256_class, "to_s",          sha256_hexdigest,     ARGS_NONE());
   mrb_define_method(mrb, sha256_class, "digest_length", sha256_digest_length, ARGS_NONE());
   mrb_define_method(mrb, sha256_class, "block_length",  sha256_block_length,  ARGS_NONE());
+  mrb_define_method(mrb, sha256_class, "file",          sha256_file,          ARGS_REQ(1));
 
   mrb_define_method(mrb, sha384_class, "initialize",    sha384_initialize,    ARGS_NONE());
   mrb_define_method(mrb, sha384_class, "update",        sha384_update,        ARGS_REQ(1));
@@ -296,6 +381,7 @@ mrb_mruby_sha2_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, sha384_class, "to_s",          sha384_hexdigest,     ARGS_NONE());
   mrb_define_method(mrb, sha384_class, "digest_length", sha384_digest_length, ARGS_NONE());
   mrb_define_method(mrb, sha384_class, "block_length",  sha384_block_length,  ARGS_NONE());
+  mrb_define_method(mrb, sha384_class, "file",          sha384_file,          ARGS_REQ(1));
 
   mrb_define_method(mrb, sha512_class, "initialize",    sha512_initialize,    ARGS_NONE());
   mrb_define_method(mrb, sha512_class, "update",        sha512_update,        ARGS_REQ(1));
@@ -308,6 +394,7 @@ mrb_mruby_sha2_gem_init(mrb_state* mrb)
   mrb_define_method(mrb, sha512_class, "to_s",          sha512_hexdigest,     ARGS_NONE());
   mrb_define_method(mrb, sha512_class, "digest_length", sha512_digest_length, ARGS_NONE());
   mrb_define_method(mrb, sha512_class, "block_length",  sha512_block_length,  ARGS_NONE());
+  mrb_define_method(mrb, sha512_class, "file",          sha512_file,          ARGS_REQ(1));
 }
 
 void
