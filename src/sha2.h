@@ -71,10 +71,11 @@ extern "C" {
  * uintXX_t (from inttypes.h), you may need to define things by hand
  * for your system:
  */
-#if 0
+#ifdef _WIN32
 typedef unsigned char u_int8_t;		/* 1-byte  (8-bits)  */
 typedef unsigned int u_int32_t;		/* 4-bytes (32-bits) */
 typedef unsigned long long u_int64_t;	/* 8-bytes (64-bits) */
+#define BYTE_ORDER LITTLE_ENDIAN
 #endif
 /*
  * Most BSD systems already define u_intXX_t types, as does Linux.

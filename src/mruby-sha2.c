@@ -64,9 +64,10 @@ sha256_clone(mrb_state *mrb, mrb_value self)
 {
   SHA256_CTX *ctx = (SHA256_CTX*)DATA_PTR(self);
   SHA256_CTX *ctx_copy = (SHA256_CTX*)mrb_malloc(mrb, sizeof(SHA256_CTX));
+  struct RData *c;
   memcpy(ctx_copy, ctx, sizeof(SHA256_CTX));
 
-  struct RData *c = mrb_data_object_alloc(mrb, sha256_class, ctx_copy, &sha256_type);
+  c = mrb_data_object_alloc(mrb, sha256_class, ctx_copy, &sha256_type);
   return mrb_obj_value(c);
 }
 
@@ -172,9 +173,10 @@ sha384_clone(mrb_state *mrb, mrb_value self)
 {
   SHA384_CTX *ctx = (SHA384_CTX*)DATA_PTR(self);
   SHA384_CTX *ctx_copy = (SHA384_CTX*)mrb_malloc(mrb, sizeof(SHA384_CTX));
+  struct RData *c;
   memcpy(ctx_copy, ctx, sizeof(SHA384_CTX));
 
-  struct RData *c = mrb_data_object_alloc(mrb, sha384_class, ctx_copy, &sha384_type);
+  c = mrb_data_object_alloc(mrb, sha384_class, ctx_copy, &sha384_type);
   return mrb_obj_value(c);
 }
 
@@ -280,9 +282,10 @@ sha512_clone(mrb_state *mrb, mrb_value self)
 {
   SHA512_CTX *ctx = (SHA512_CTX*)DATA_PTR(self);
   SHA512_CTX *ctx_copy = (SHA512_CTX*)mrb_malloc(mrb, sizeof(SHA512_CTX));
+  struct RData *c;
   memcpy(ctx_copy, ctx, sizeof(SHA512_CTX));
 
-  struct RData *c = mrb_data_object_alloc(mrb, sha512_class, ctx_copy, &sha512_type);
+  c = mrb_data_object_alloc(mrb, sha512_class, ctx_copy, &sha512_type);
   return mrb_obj_value(c);
 }
 
